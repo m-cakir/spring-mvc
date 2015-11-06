@@ -46,7 +46,7 @@ public class AuthSuccessListener implements ApplicationListener<AuthenticationSu
 					strDetail = details.toString();
 			}
 
-			List<Menu> menus = getMenu(user.getRole().getMenus());
+			List<Menu> menus = getMenu(user.getRole().getMenu());
 			session.setAttribute(USER_VAR, user);
 			session.setAttribute(USER_MENUS_VAR, menus);
 
