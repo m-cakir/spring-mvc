@@ -17,7 +17,7 @@ public class Role extends BaseModel {
 		inverseJoinColumns = { @JoinColumn }
 	)
 	@OrderBy("displayOrder ASC")
-	private Set<Menu> menus;
+	private Set<Menu> menu;
 
 	public String getName() {
 		return name;
@@ -27,11 +27,11 @@ public class Role extends BaseModel {
 		this.name = name;
 	}
 
-	public Set<Menu> getMenus() {
-		return menus;
+	public Set<Menu> getMenu() {
+		return menu;
 	}
 
-	public void setMenus(Set<Menu> menus) {
-		this.menus = menus;
+	public void setMenu(Set<Menu> menu) {
+		this.menu = menu;
 	}
 }
