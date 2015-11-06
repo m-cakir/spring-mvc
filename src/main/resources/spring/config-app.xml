@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		      http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		      http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd	">
+
+       <!-- Enables the Spring MVC @Controller programming model -->
+       <context:component-scan base-package="com.mcakir"/>
+
+       <util:properties id="appProps" location="classpath:application.properties"/>
+
+       <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+              <property name="ignoreUnresolvablePlaceholders" value="true"/>
+              <property name="locations">
+                     <list>
+                            <value>classpath:/application.properties</value>
+                            <value>classpath:/db.properties</value>
+                     </list>
+              </property>
+       </bean>
+
+       <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+              <property name="driverClassName" value="${jdbc.driverClassName}" />
+              <property name="url" value="${jdbc.url}" />
+              <property name="username" value="${jdbc.username}" />
+              <property name="password" value="${jdbc.password}" />
+
+              <property name="maxActive" value="10" />
+              <property name="maxIdle" value="10" />
+              <property name="maxWait" value="10000" />
+
+              <property name="removeAbandoned" value="true" />
+              <property name="removeAbandonedTimeout" value="180" />
+              <property name="logAbandoned" value="true" />
+
+              <property name="testWhileIdle" value="true" />
+              <property name="validationQuery" value="SELECT 1" />
+
+              <property name="timeBetweenEvictionRunsMillis" value="600000" />
+              <property name="minEvictableIdleTimeMillis" value="1800000" />
+       </bean>
+
+       <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+              <property name="dataSource" ref="dataSource"/>
+              <property name="packagesToScan" value="com.mcakir"/>
+              <property name="jpaVendorAdapter">
+                     <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+              </property>
+              <property name="jpaProperties">
+                     <props>
+                            <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+                            <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                            <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                            <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                            <prop key="hibernate.hbm2ddl.import_files">${hibernate.hbm2ddl.import_files}</prop>
+                            <prop key="hibernate.ejb.naming_strategy">${hibernate.ejb.naming_strategy}</prop>
+                     </props>
+              </property>
+
+       </bean>
+
+       <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+              <property name="entityManagerFactory" ref="entityManagerFactory"/>
+       </bean>
+
+       <tx:annotation-driven transaction-manager="transactionManager"/>
+
+       <jpa:repositories base-package="com.mcakir.core.repository"/>
+
+       <!-- security configuration -->
+       <import resource="config-security.xml" />
+
+</beans>
